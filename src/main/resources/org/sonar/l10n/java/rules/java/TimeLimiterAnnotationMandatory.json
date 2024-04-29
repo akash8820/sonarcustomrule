@@ -1,0 +1,12 @@
+{
+	"title": "TimeLimiter Annotation Mandatory",
+	"type": "VULNERABILITY",
+	"status": "ready",
+	"remediation": {
+		"func": "Constant\/Issue",
+		"constantCost": "15min"
+	},
+	"tags": [		
+	],
+	"defaultSeverity": "Minor"
+}
