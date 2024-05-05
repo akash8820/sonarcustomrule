@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.sonar.plugins.java.api.JavaCheck;
 
+import com.deloitte.java.sonarcustomrule.rules.ImportPackageScan;
 import com.deloitte.java.sonarcustomrule.rules.TimeLimiterAnnotationMandatoryRule;
 
 public final class RulesList {
@@ -24,6 +25,7 @@ public final class RulesList {
 	 * These rules are going to target MAIN code only
 	 */
 	public static List<Class<? extends JavaCheck>> getJavaChecks() {
-		return Collections.unmodifiableList(Arrays.asList(TimeLimiterAnnotationMandatoryRule.class));
+		return Collections
+				.unmodifiableList(Arrays.asList(TimeLimiterAnnotationMandatoryRule.class, ImportPackageScan.class));
 	}
 }
