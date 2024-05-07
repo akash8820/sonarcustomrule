@@ -10,7 +10,7 @@ import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonarsource.analyzer.commons.RuleMetadataLoader;
 
-import com.deloitte.java.sonarcustomrule.rules.TimeLimiterAnnotationMandatoryRule;
+import com.deloitte.java.sonarcustomrule.rules.annotationcheck.TimeOutAnnotationCheckRule;
 
 public class JavaRulesDefinition implements RulesDefinition {
 

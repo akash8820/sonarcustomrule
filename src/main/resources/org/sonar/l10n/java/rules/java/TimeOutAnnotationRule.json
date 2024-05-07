@@ -1,5 +1,5 @@
 {
-	"title": "TimeLimiter Annotation Mandatory",
+	"title": "Timeout not implemented in project",
 	"type": "VULNERABILITY",
 	"status": "ready",
 	"remediation": {

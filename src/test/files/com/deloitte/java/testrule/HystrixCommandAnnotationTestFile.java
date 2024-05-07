@@ -1,9 +1,7 @@
 package com.deloitte.java.testrule;
 
-//Don't format this class
-public class TimeLimiterAnnotationMandatoryTestFile {
-
-	@TimeLimiter
+public class HystrixCommandAnnotationTestFile {
+	
 	public void aMethod() {
 	}
 
@@ -12,5 +10,9 @@ public class TimeLimiterAnnotationMandatoryTestFile {
 
 	@VariousAnnotation
 	public void differentMethod() {} 
+	
+	@HystrixCommand
+	public void bMethod() {
+	}
 
 }
