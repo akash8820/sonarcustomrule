@@ -17,11 +17,9 @@ public class TimeLimiterAnnotationMandatoryRuleTest {
 				.onFile("src/test/files/com/deloitte/java/testrule/TimeLimiterAnnotationTestFile.java")
 				.withCheck((JavaFileScanner) check).verifyNoIssues();
 
-		CheckVerifier.newVerifier()
-				.onFile("src/test/files/com/deloitte/java/testrule/ReturnAndBeanTestFile.java")
+		CheckVerifier.newVerifier().onFile("src/test/files/com/deloitte/java/testrule/ReturnAndBeanTestFile.java")
 				.withCheck((JavaFileScanner) check).verifyNoIssues();
-		
-		
+
 	}
 
 	@Test
@@ -32,5 +30,7 @@ public class TimeLimiterAnnotationMandatoryRuleTest {
 		CheckVerifier.newVerifier()
 				.onFile("src/test/files/com/deloitte/java/testrule/HystrixCommandAnnotationTestFile.java")
 				.withCheck((JavaFileScanner) check).verifyNoIssues();
+
 	}
+
 }

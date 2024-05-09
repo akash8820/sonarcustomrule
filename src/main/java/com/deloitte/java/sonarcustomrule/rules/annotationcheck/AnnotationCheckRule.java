@@ -17,70 +17,71 @@ import org.sonar.plugins.java.api.tree.TypeTree;
 
 public abstract class AnnotationCheckRule extends IssuableSubscriptionVisitor implements JavaFileScanner {
 
-	protected abstract List<String> getAnnotationNames();
+    protected abstract List<String> getAnnotationNames();
 
-	protected abstract List<String> getReturnTypeNames();
+    protected abstract List<String> getReturnTypeNames();
 
-	protected abstract String getMessage();
+    protected abstract String getMessage();
 
-	@RuleProperty(description = "Name of the annotation")
-	protected String name;
+    @RuleProperty(description = "Name of the annotation")
+    protected String name;
 
-	@Override
-	public void scanFile(JavaFileScannerContext context) {
-		super.scanFile(context);
-		boolean annotationPresent = false;
-		boolean returnTypePresent = false;
-		if (!annotationPresent && !returnTypePresent) {
-			context.reportIssue(this, context.getTree(),
-					getMessage() + " (None of the specified annotations or return types found)");
-		}
-	}
+    private boolean annotationPresent;
+    private boolean returnTypePresent;
 
-	@Override
-	public List<Kind> nodesToVisit() {
-		return Collections.singletonList(Tree.Kind.METHOD);
-	}
+    @Override
+    public List<Kind> nodesToVisit() {
+        return Collections.singletonList(Tree.Kind.METHOD);
+    }
 
-	@Override
-	public void visitNode(Tree tree) {
-		MethodTree methodTree = (MethodTree) tree;
-		boolean annotationPresent = checkAnnotation(methodTree);
-		boolean returnTypePresent = checkReturnType(methodTree);
-	}
+    @Override
+    public void visitNode(Tree tree) {
+        MethodTree methodTree = (MethodTree) tree;
+        annotationPresent |= checkAnnotation(methodTree);
+        returnTypePresent |= checkReturnType(methodTree);
+    }
 
-	private boolean checkAnnotation(MethodTree methodTree) {
-		List<AnnotationTree> annotations = methodTree.modifiers().annotations();
-		List<String> annotationNamesToCheck = getAnnotationNames();
-		for (AnnotationTree annotationTree : annotations) {
-			TypeTree annotationType = annotationTree.annotationType();
-			if (annotationType.is(Tree.Kind.IDENTIFIER)) {
-				String annotationName = ((IdentifierTree) annotationType).name();
-				if (annotationNamesToCheck.contains(annotationName)) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
+    @Override
+    public void leaveFile(JavaFileScannerContext context) {
+        if (!annotationPresent && !returnTypePresent) {
+            reportIssue(context.getTree(), getMessage());
+        }
+        annotationPresent = false; 
+        returnTypePresent = false;
+    }
 
-	private boolean checkReturnType(MethodTree methodTree) {
-		MethodSymbol methodSymbol = methodTree.symbol();
-		Type returnType = methodSymbol.returnType().type();
-		List<String> returnTypeNamesToCheck = getReturnTypeNames();
-		if (returnTypeNamesToCheck.contains(returnType.fullyQualifiedName())) {
-			return isAnnotatedWithBean(methodTree);
-		}
-		return false;
-	}
+    private boolean checkAnnotation(MethodTree methodTree) {
+        List<AnnotationTree> annotations = methodTree.modifiers().annotations();
+        List<String> annotationNamesToCheck = getAnnotationNames();
+        for (AnnotationTree annotationTree : annotations) {
+            TypeTree annotationType = annotationTree.annotationType();
+            if (annotationType.is(Tree.Kind.IDENTIFIER)) {
+                String annotationName = ((IdentifierTree) annotationType).name();
+                if (annotationNamesToCheck.contains(annotationName)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
-	private boolean isAnnotatedWithBean(MethodTree methodTree) {
-		List<AnnotationTree> annotations = methodTree.modifiers().annotations();
-		for (AnnotationTree annotation : annotations) {
-			if ("Bean".equalsIgnoreCase(annotation.annotationType().symbolType().name())) {
-				return true;
-			}
-		}
-		return false;
-	}
+    private boolean checkReturnType(MethodTree methodTree) {
+        MethodSymbol methodSymbol = methodTree.symbol();
+        Type returnType = methodSymbol.returnType().type();
+        List<String> returnTypeNamesToCheck = getReturnTypeNames();
+        if (returnTypeNamesToCheck.contains(returnType.fullyQualifiedName())) {
+            return isAnnotatedWithBean(methodTree);
+        }
+        return false;
+    }
+
+    private boolean isAnnotatedWithBean(MethodTree methodTree) {
+        List<AnnotationTree> annotations = methodTree.modifiers().annotations();
+        for (AnnotationTree annotation : annotations) {
+            if ("Bean".equalsIgnoreCase(annotation.annotationType().symbolType().name())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

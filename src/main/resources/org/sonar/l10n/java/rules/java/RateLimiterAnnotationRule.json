@@ -1,5 +1,5 @@
 {
-	"title": "TimeLimiter implementation missing",
+	"title": "RateLimiter implementation missing",
 	"type": "VULNERABILITY",
 	"status": "ready",
 	"remediation": {
