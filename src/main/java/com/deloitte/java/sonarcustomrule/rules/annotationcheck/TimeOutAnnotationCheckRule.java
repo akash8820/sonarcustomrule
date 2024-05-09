@@ -15,6 +15,13 @@ public class TimeOutAnnotationCheckRule extends AnnotationCheckRule {
 		ANNOTATION_NAMES.add("HystrixCommand");
 	}
 
+	private static final List<String> RETUNTYPE_NAMES = new ArrayList<>();
+
+	static {
+		RETUNTYPE_NAMES.add("TimeLimiter");
+		RETUNTYPE_NAMES.add("RateLimiter");
+	}
+
 	@Override
 	protected List<String> getAnnotationNames() {
 		return ANNOTATION_NAMES;
@@ -23,5 +30,10 @@ public class TimeOutAnnotationCheckRule extends AnnotationCheckRule {
 	@Override
 	protected String getMessage() {
 		return "Timeout not implemented in project";
+	}
+
+	@Override
+	protected List<String> getReturnTypeNames() {
+		return RETUNTYPE_NAMES;
 	}
 }
