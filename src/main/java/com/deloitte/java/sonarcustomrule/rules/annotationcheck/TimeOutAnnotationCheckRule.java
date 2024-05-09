@@ -22,6 +22,6 @@ public class TimeOutAnnotationCheckRule extends AnnotationCheckRule {
 
 	@Override
 	protected String getMessage() {
-		return "Custom annotation check failed";
+		return "Timeout not implemented in project";
 	}
 }
