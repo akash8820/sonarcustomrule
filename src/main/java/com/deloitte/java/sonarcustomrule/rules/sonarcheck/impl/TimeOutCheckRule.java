@@ -8,12 +8,13 @@ import org.sonar.check.Rule;
 import com.deloitte.java.sonarcustomrule.rules.sonarcheck.SonarCustomCheckRule;
 import com.deloitte.java.sonarcustomrule.rules.sonarcheck.stategy.AnnotationCheckStrategyImpl;
 import com.deloitte.java.sonarcustomrule.rules.sonarcheck.stategy.ImportCheckStategyImpl;
+import com.deloitte.java.sonarcustomrule.rules.sonarcheck.stategy.SuperClassCheckStategyImpl;
 
 @Rule(key = "TimeOutAnnotationRule")
 public class TimeOutCheckRule extends SonarCustomCheckRule {
 
 	public TimeOutCheckRule() {
-		super(new AnnotationCheckStrategyImpl(), new ImportCheckStategyImpl());
+		super(new AnnotationCheckStrategyImpl(), new ImportCheckStategyImpl(), new SuperClassCheckStategyImpl());
 	}
 
 	private static final List<String> ANNOTATION_NAMES = new ArrayList<>();
@@ -21,6 +22,12 @@ public class TimeOutCheckRule extends SonarCustomCheckRule {
 	static {
 		ANNOTATION_NAMES.add("TimeLimiter");
 		ANNOTATION_NAMES.add("HystrixCommand");
+	}
+
+	private static final List<String> SUPERCLASS_NAMES = new ArrayList<>();
+
+	static {
+		SUPERCLASS_NAMES.add("HystrixCommand");
 	}
 
 	@Override
@@ -41,6 +48,11 @@ public class TimeOutCheckRule extends SonarCustomCheckRule {
 	@Override
 	protected List<String> getimportNames() {
 		return null;
+	}
+
+	@Override
+	protected List<String> getSuperClassNames() {
+		return SUPERCLASS_NAMES;
 	}
 
 }

@@ -31,12 +31,34 @@ class RateLimiterCheckRuleTest {
 	}
 	
 	@Test
+	void detectedRateLimitKeyResolverWithbeanAnnotated() {
+		// Use an instance of the check under test to raise the issue.
+		RateLimiterCheckRule check = new RateLimiterCheckRule();
+
+		CheckVerifier.newVerifier()
+				.onFile("src/test/files/com/deloitte/java/testrule/ratelimit/RateLimitKeyResolverWithbeanAnnotated.java")
+				.withCheck((JavaFileScanner) check).verifyNoIssues();
+
+	}
+	
+	@Test
 	void detectedRateLimiterBucketAndImport() {
 		// Use an instance of the check under test to raise the issue.
 		RateLimiterCheckRule check = new RateLimiterCheckRule();
 
 		CheckVerifier.newVerifier()
 				.onFile("src/test/files/com/deloitte/java/testrule/ratelimit/RateLimiterBucketAndImportTestFile.java")
+				.withCheck((JavaFileScanner) check).verifyNoIssues();
+
+	}
+	
+	//RateLimitKeyResolverWithCloudGateway
+	@Test
+	void detectedRateLimitKeyResolverWithCloudGateway() {
+		RateLimiterCheckRule check = new RateLimiterCheckRule();
+
+		CheckVerifier.newVerifier()
+				.onFile("src/test/files/com/deloitte/java/testrule/ratelimit/RateLimitKeyResolverWithCloudGateway.java")
 				.withCheck((JavaFileScanner) check).verifyNoIssues();
 
 	}

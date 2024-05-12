@@ -1,23 +1,17 @@
 package com.deloitte.java.sonarcustomrule.rules.sonarcheck;
 
-import java.util.Collections;
 import java.util.List;
+
 import org.sonar.check.RuleProperty;
 import org.sonar.plugins.java.api.IssuableSubscriptionVisitor;
 import org.sonar.plugins.java.api.JavaFileScanner;
 import org.sonar.plugins.java.api.JavaFileScannerContext;
-import org.sonar.plugins.java.api.semantic.Type;
-import org.sonar.plugins.java.api.semantic.Symbol.MethodSymbol;
-import org.sonar.plugins.java.api.tree.AnnotationTree;
-import org.sonar.plugins.java.api.tree.IdentifierTree;
-import org.sonar.plugins.java.api.tree.ImportTree;
-import org.sonar.plugins.java.api.tree.MethodTree;
 import org.sonar.plugins.java.api.tree.Tree;
 import org.sonar.plugins.java.api.tree.Tree.Kind;
-import org.sonar.plugins.java.api.tree.TypeTree;
 
 import com.deloitte.java.sonarcustomrule.rules.sonarcheck.stategy.AnnotationCheckStrategy;
 import com.deloitte.java.sonarcustomrule.rules.sonarcheck.stategy.ImportCheckStrategy;
+import com.deloitte.java.sonarcustomrule.rules.sonarcheck.stategy.SuperClassCheckStategy;
 
 public abstract class SonarCustomCheckRule extends IssuableSubscriptionVisitor implements JavaFileScanner {
 
@@ -29,18 +23,21 @@ public abstract class SonarCustomCheckRule extends IssuableSubscriptionVisitor i
 	private boolean importPresent;
 	private boolean checkReturnType;
 	private boolean checkReturnandImportPresent;
+	private boolean checkSuperClassPresent;
 	private AnnotationCheckStrategy annotationCheckStrategy;
 	private ImportCheckStrategy importCheckStrategy;
+	private SuperClassCheckStategy superClassCheckStategy;
 
 	public SonarCustomCheckRule(AnnotationCheckStrategy annotationCheckStrategy,
-			ImportCheckStrategy importCheckStrategy) {
+			ImportCheckStrategy importCheckStrategy, SuperClassCheckStategy superClassCheckStategy) {
 		this.annotationCheckStrategy = annotationCheckStrategy;
 		this.importCheckStrategy = importCheckStrategy;
+		this.superClassCheckStategy = superClassCheckStategy;
 	}
 
 	@Override
 	public List<Kind> nodesToVisit() {
-		return List.of(Tree.Kind.METHOD, Tree.Kind.IMPORT);
+		return List.of(Tree.Kind.METHOD, Tree.Kind.IMPORT, Tree.Kind.CLASS);
 	}
 
 	@Override
@@ -53,7 +50,10 @@ public abstract class SonarCustomCheckRule extends IssuableSubscriptionVisitor i
 			checkReturnType = importCheckStrategy.checkReturnType(tree, getReturnTypeNames());
 		} else if (tree.is(Tree.Kind.IMPORT)) {
 			importPresent = importCheckStrategy.checkImport(tree, getimportNames()) || importPresent;
+		} else if (tree.is(Tree.Kind.CLASS)) {
+			checkSuperClassPresent = superClassCheckStategy.checkSuperClass(tree, getSuperClassNames());
 		}
+
 		if (checkReturnType && importPresent)
 			checkReturnandImportPresent = Boolean.TRUE;
 
@@ -61,7 +61,7 @@ public abstract class SonarCustomCheckRule extends IssuableSubscriptionVisitor i
 
 	@Override
 	public void leaveFile(JavaFileScannerContext context) {
-		if (!annotationPresent && !returnTypeAndAnnotatedWithBean && !checkReturnandImportPresent) {
+		if (!annotationPresent && !returnTypeAndAnnotatedWithBean && !checkReturnandImportPresent && !checkSuperClassPresent) {
 			reportIssue(context.getTree(), getMessage());
 		}
 		annotationPresent = false;
@@ -73,6 +73,8 @@ public abstract class SonarCustomCheckRule extends IssuableSubscriptionVisitor i
 	protected abstract List<String> getReturnTypeNames();
 
 	protected abstract List<String> getimportNames();
+
+	protected abstract List<String> getSuperClassNames();
 
 	protected abstract String getMessage();
 

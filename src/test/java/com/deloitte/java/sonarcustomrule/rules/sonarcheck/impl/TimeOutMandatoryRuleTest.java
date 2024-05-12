@@ -22,11 +22,20 @@ public class TimeOutMandatoryRuleTest {
 
 	@Test
 	void detectedHystrixCommand() {
-		// Use an instance of the check under test to raise the issue.
 		TimeOutCheckRule check = new TimeOutCheckRule();
 
 		CheckVerifier.newVerifier()
 				.onFile("src/test/files/com/deloitte/java/testrule/timeout/HystrixCommandAnnotationTestFile.java")
+				.withCheck((JavaFileScanner) check).verifyNoIssues();
+
+	}
+	
+	@Test
+	void detectedHystrixSuperClass() {
+		TimeOutCheckRule check = new TimeOutCheckRule();
+
+		CheckVerifier.newVerifier()
+				.onFile("src/test/files/com/deloitte/java/testrule/timeout/HystrixSuperClassTestFile.java")
 				.withCheck((JavaFileScanner) check).verifyNoIssues();
 
 	}
