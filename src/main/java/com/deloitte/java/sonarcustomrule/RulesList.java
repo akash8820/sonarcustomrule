@@ -8,7 +8,8 @@ import java.util.List;
 import org.sonar.plugins.java.api.JavaCheck;
 
 import com.deloitte.java.sonarcustomrule.rules.ImportPackageScan;
-import com.deloitte.java.sonarcustomrule.rules.annotationcheck.TimeOutAnnotationCheckRule;
+import com.deloitte.java.sonarcustomrule.rules.sonarcheck.impl.RateLimiterAnnotationCheckRule;
+import com.deloitte.java.sonarcustomrule.rules.sonarcheck.impl.TimeOutAnnotationCheckRule;
 
 public final class RulesList {
 
@@ -25,7 +26,7 @@ public final class RulesList {
 	 * These rules are going to target MAIN code only
 	 */
 	public static List<Class<? extends JavaCheck>> getJavaChecks() {
-		return Collections
-				.unmodifiableList(Arrays.asList(TimeOutAnnotationCheckRule.class, ImportPackageScan.class));
+		return Collections.unmodifiableList(
+				Arrays.asList(TimeOutAnnotationCheckRule.class, RateLimiterAnnotationCheckRule.class));
 	}
 }

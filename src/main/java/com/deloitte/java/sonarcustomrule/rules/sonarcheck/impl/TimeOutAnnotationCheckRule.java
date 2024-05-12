@@ -1,12 +1,20 @@
-package com.deloitte.java.sonarcustomrule.rules.annotationcheck;
+package com.deloitte.java.sonarcustomrule.rules.sonarcheck.impl;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.sonar.check.Rule;
 
+import com.deloitte.java.sonarcustomrule.rules.sonarcheck.SonarCustomCheckRule;
+import com.deloitte.java.sonarcustomrule.rules.sonarcheck.stategy.AnnotationCheckStrategy;
+import com.deloitte.java.sonarcustomrule.rules.sonarcheck.stategy.AnnotationCheckStrategyImpl;
+
 @Rule(key = "TimeOutAnnotationRule")
-public class TimeOutAnnotationCheckRule extends AnnotationCheckRule {
+public class TimeOutAnnotationCheckRule extends SonarCustomCheckRule {
+
+	public TimeOutAnnotationCheckRule(AnnotationCheckStrategy strategy) {
+		super(new AnnotationCheckStrategyImpl());
+	}
 
 	private static final List<String> ANNOTATION_NAMES = new ArrayList<>();
 

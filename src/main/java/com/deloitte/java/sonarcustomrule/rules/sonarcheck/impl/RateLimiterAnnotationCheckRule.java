@@ -1,12 +1,20 @@
-package com.deloitte.java.sonarcustomrule.rules.annotationcheck;
+package com.deloitte.java.sonarcustomrule.rules.sonarcheck.impl;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.sonar.check.Rule;
 
+import com.deloitte.java.sonarcustomrule.rules.sonarcheck.SonarCustomCheckRule;
+import com.deloitte.java.sonarcustomrule.rules.sonarcheck.stategy.AnnotationCheckStrategy;
+import com.deloitte.java.sonarcustomrule.rules.sonarcheck.stategy.AnnotationCheckStrategyImpl;
+
 @Rule(key = "RateLimiterAnnotationRule")
-public class RateLimiterAnnotationCheckRule extends AnnotationCheckRule {
+public class RateLimiterAnnotationCheckRule extends SonarCustomCheckRule {
+
+	public RateLimiterAnnotationCheckRule(AnnotationCheckStrategy annotationCheckStrategy) {
+		super(new AnnotationCheckStrategyImpl());
+	}
 
 	private static final List<String> ANNOTATION_NAMES = new ArrayList<>();
 
@@ -35,4 +43,3 @@ public class RateLimiterAnnotationCheckRule extends AnnotationCheckRule {
 		return RETUNTYPE_NAMES;
 	}
 }
-
