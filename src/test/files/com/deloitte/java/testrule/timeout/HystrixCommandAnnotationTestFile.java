@@ -1,9 +1,7 @@
-package com.deloitte.java.testrule;
+package com.deloitte.java.testrule.timeout;
 
-//Don't format this class
-public class TimeLimiterAnnotationTestFile {
-
-	@TimeLimiter
+public class HystrixCommandAnnotationTestFile {
+	
 	public void aMethod() {
 	}
 
@@ -12,6 +10,9 @@ public class TimeLimiterAnnotationTestFile {
 
 	@VariousAnnotation
 	public void differentMethod() {} 
-
+	
+	@HystrixCommand
+	public void bMethod() {
+	}
 
 }

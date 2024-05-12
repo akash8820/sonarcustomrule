@@ -10,12 +10,14 @@ import org.sonar.plugins.java.api.semantic.Type;
 import org.sonar.plugins.java.api.semantic.Symbol.MethodSymbol;
 import org.sonar.plugins.java.api.tree.AnnotationTree;
 import org.sonar.plugins.java.api.tree.IdentifierTree;
+import org.sonar.plugins.java.api.tree.ImportTree;
 import org.sonar.plugins.java.api.tree.MethodTree;
 import org.sonar.plugins.java.api.tree.Tree;
 import org.sonar.plugins.java.api.tree.Tree.Kind;
 import org.sonar.plugins.java.api.tree.TypeTree;
 
 import com.deloitte.java.sonarcustomrule.rules.sonarcheck.stategy.AnnotationCheckStrategy;
+import com.deloitte.java.sonarcustomrule.rules.sonarcheck.stategy.ImportCheckStrategy;
 
 public abstract class SonarCustomCheckRule extends IssuableSubscriptionVisitor implements JavaFileScanner {
 
@@ -23,40 +25,54 @@ public abstract class SonarCustomCheckRule extends IssuableSubscriptionVisitor i
 	protected String name;
 
 	private boolean annotationPresent;
-	private boolean returnTypePresent;
-	private AnnotationCheckStrategy annotationStrategy;
+	private boolean returnTypeAndAnnotatedWithBean;
+	private boolean importPresent;
+	private boolean checkReturnType;
+	private boolean checkReturnandImportPresent;
+	private AnnotationCheckStrategy annotationCheckStrategy;
+	private ImportCheckStrategy importCheckStrategy;
 
-	public SonarCustomCheckRule(AnnotationCheckStrategy strategy) {
-		this.annotationStrategy = strategy;
+	public SonarCustomCheckRule(AnnotationCheckStrategy annotationCheckStrategy,
+			ImportCheckStrategy importCheckStrategy) {
+		this.annotationCheckStrategy = annotationCheckStrategy;
+		this.importCheckStrategy = importCheckStrategy;
 	}
 
 	@Override
 	public List<Kind> nodesToVisit() {
-		return Collections.singletonList(Tree.Kind.METHOD);
+		return List.of(Tree.Kind.METHOD, Tree.Kind.IMPORT);
 	}
 
 	@Override
 	public void visitNode(Tree tree) {
-		MethodTree methodTree = (MethodTree) tree;
-		annotationPresent = annotationStrategy.checkAnnotation(methodTree, getAnnotationNames()) ? true
-				: annotationPresent;
-		returnTypePresent = annotationStrategy.checkReturnTypeAndAnnotatedWithBean(methodTree, getReturnTypeNames())
-				? true
-				: returnTypePresent;
+		if (tree.is(Tree.Kind.METHOD)) {
+			annotationPresent = annotationCheckStrategy.checkAnnotation(tree, getAnnotationNames())
+					|| annotationPresent;
+			returnTypeAndAnnotatedWithBean = annotationCheckStrategy.checkReturnTypeAndAnnotatedWithBean(tree,
+					getReturnTypeNames()) || returnTypeAndAnnotatedWithBean;
+			checkReturnType = importCheckStrategy.checkReturnType(tree, getReturnTypeNames());
+		} else if (tree.is(Tree.Kind.IMPORT)) {
+			importPresent = importCheckStrategy.checkImport(tree, getimportNames()) || importPresent;
+		}
+		if (checkReturnType && importPresent)
+			checkReturnandImportPresent = Boolean.TRUE;
+
 	}
 
 	@Override
 	public void leaveFile(JavaFileScannerContext context) {
-		if (!annotationPresent && !returnTypePresent) {
+		if (!annotationPresent && !returnTypeAndAnnotatedWithBean && !checkReturnandImportPresent) {
 			reportIssue(context.getTree(), getMessage());
 		}
 		annotationPresent = false;
-		returnTypePresent = false;
+		returnTypeAndAnnotatedWithBean = false;
 	}
 
 	protected abstract List<String> getAnnotationNames();
 
 	protected abstract List<String> getReturnTypeNames();
+
+	protected abstract List<String> getimportNames();
 
 	protected abstract String getMessage();
 

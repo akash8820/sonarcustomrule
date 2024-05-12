@@ -13,13 +13,14 @@ import org.sonar.plugins.java.api.tree.TypeTree;
 public class AnnotationCheckStrategyImpl implements AnnotationCheckStrategy {
 
 	@Override
-	public boolean checkAnnotation(MethodTree methodTree, List<String> annotationNamesToCheck) {
+	public boolean checkAnnotation(Tree tree, List<String> annotationNamesToCheck) {
+		MethodTree methodTree = (MethodTree) tree;
 		List<AnnotationTree> annotations = methodTree.modifiers().annotations();
 		for (AnnotationTree annotationTree : annotations) {
 			TypeTree annotationType = annotationTree.annotationType();
 			if (annotationType.is(Tree.Kind.IDENTIFIER)) {
 				String annotationName = ((IdentifierTree) annotationType).name();
-				if (annotationNamesToCheck.contains(annotationName)) {
+				if (annotationNamesToCheck != null && annotationNamesToCheck.contains(annotationName)) {
 					return true;
 				}
 			}
@@ -28,10 +29,11 @@ public class AnnotationCheckStrategyImpl implements AnnotationCheckStrategy {
 	}
 
 	@Override
-	public boolean checkReturnTypeAndAnnotatedWithBean(MethodTree methodTree, List<String> returnTypeNamesToCheck) {
+	public boolean checkReturnTypeAndAnnotatedWithBean(Tree tree, List<String> returnTypeNamesToCheck) {
+		MethodTree methodTree = (MethodTree) tree;
 		MethodSymbol methodSymbol = methodTree.symbol();
 		Type returnType = methodSymbol.returnType().type();
-		if (returnTypeNamesToCheck.contains(returnType.fullyQualifiedName())) {
+		if (returnTypeNamesToCheck != null && returnTypeNamesToCheck.contains(returnType.fullyQualifiedName())) {
 			return isAnnotatedWithBean(methodTree);
 		}
 		return false;

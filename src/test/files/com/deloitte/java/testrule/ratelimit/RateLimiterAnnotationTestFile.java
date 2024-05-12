@@ -1,6 +1,6 @@
-package com.deloitte.java.testrule;
+package com.deloitte.java.testrule.ratelimit;
 
-public class HystrixCommandAnnotationTestFile {
+public class RateLimiterAnnotationTestFile {	
 	
 	public void aMethod() {
 	}
@@ -11,8 +11,9 @@ public class HystrixCommandAnnotationTestFile {
 	@VariousAnnotation
 	public void differentMethod() {} 
 	
-	@HystrixCommand
-	public void bMethod() {
+	@RateLimiter
+	public void rateLimiterAnnotation() {
 	}
+	
 
 }

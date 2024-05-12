@@ -6,29 +6,35 @@ import java.util.List;
 import org.sonar.check.Rule;
 
 import com.deloitte.java.sonarcustomrule.rules.sonarcheck.SonarCustomCheckRule;
-import com.deloitte.java.sonarcustomrule.rules.sonarcheck.stategy.AnnotationCheckStrategy;
 import com.deloitte.java.sonarcustomrule.rules.sonarcheck.stategy.AnnotationCheckStrategyImpl;
+import com.deloitte.java.sonarcustomrule.rules.sonarcheck.stategy.ImportCheckStategyImpl;
 
-@Rule(key = "TimeOutAnnotationRule")
-public class TimeOutAnnotationCheckRule extends SonarCustomCheckRule {
+@Rule(key = "RateLimiterAnnotationRule")
+public class RateLimiterCheckRule extends SonarCustomCheckRule {
 
-	public TimeOutAnnotationCheckRule(AnnotationCheckStrategy strategy) {
-		super(new AnnotationCheckStrategyImpl());
+	public RateLimiterCheckRule() {
+		super(new AnnotationCheckStrategyImpl(), new ImportCheckStategyImpl());
 	}
 
 	private static final List<String> ANNOTATION_NAMES = new ArrayList<>();
 
 	static {
-		ANNOTATION_NAMES.add("TimeLimiter");
-		ANNOTATION_NAMES.add("HystrixCommand");
+		ANNOTATION_NAMES.add("RateLimiter");
 	}
 
 	private static final List<String> RETUNTYPE_NAMES = new ArrayList<>();
 
 	static {
-		RETUNTYPE_NAMES.add("TimeLimiter");
+		RETUNTYPE_NAMES.add("Bucket");
 		RETUNTYPE_NAMES.add("RateLimiter");
 	}
+	
+	private static final List<String> IMPORT_NAMES = new ArrayList<>();
+
+	static {
+		IMPORT_NAMES.add("io.github.bucket4j.Bucket");
+	}
+
 
 	@Override
 	protected List<String> getAnnotationNames() {
@@ -37,11 +43,16 @@ public class TimeOutAnnotationCheckRule extends SonarCustomCheckRule {
 
 	@Override
 	protected String getMessage() {
-		return "Timeout not implemented in project";
+		return "rate limiter not implemented in project";
 	}
 
 	@Override
 	protected List<String> getReturnTypeNames() {
 		return RETUNTYPE_NAMES;
+	}
+
+	@Override
+	protected List<String> getimportNames() {
+		return IMPORT_NAMES;
 	}
 }
