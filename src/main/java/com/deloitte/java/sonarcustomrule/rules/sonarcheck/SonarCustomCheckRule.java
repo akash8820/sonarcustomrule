@@ -1,6 +1,7 @@
 package com.deloitte.java.sonarcustomrule.rules.sonarcheck;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.sonar.check.RuleProperty;
 import org.sonar.plugins.java.api.IssuableSubscriptionVisitor;
@@ -61,11 +62,20 @@ public abstract class SonarCustomCheckRule extends IssuableSubscriptionVisitor i
 
 	@Override
 	public void leaveFile(JavaFileScannerContext context) {
-		if (!annotationPresent && !returnTypeAndAnnotatedWithBean && !checkReturnandImportPresent && !checkSuperClassPresent) {
-			reportIssue(context.getTree(), getMessage());
+		if (!annotationPresent && !returnTypeAndAnnotatedWithBean && !checkReturnandImportPresent
+				&& !checkSuperClassPresent) {
+			reportIssue(context.getTree(), getClassName(context) + ": " + getMessage());
 		}
 		annotationPresent = false;
 		returnTypeAndAnnotatedWithBean = false;
+		checkReturnandImportPresent = false;
+		checkSuperClassPresent = false;
+	}
+
+	private String getClassName(JavaFileScannerContext context) {
+		Objects.requireNonNull(context, "JavaFileScannerContext cannot be null.");
+		String uri = context.getInputFile().uri().toString();
+		return uri.substring(uri.lastIndexOf('/') + 1);
 	}
 
 	protected abstract List<String> getAnnotationNames();
