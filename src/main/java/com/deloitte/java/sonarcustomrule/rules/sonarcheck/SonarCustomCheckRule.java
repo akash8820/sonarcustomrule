@@ -25,6 +25,7 @@ public abstract class SonarCustomCheckRule extends IssuableSubscriptionVisitor i
 	private boolean checkReturnType;
 	private boolean checkReturnandImportPresent;
 	private boolean checkSuperClassPresent;
+	private boolean propertyAnnotationPresent;
 	private AnnotationCheckStrategy annotationCheckStrategy;
 	private ImportCheckStrategy importCheckStrategy;
 	private SuperClassCheckStategy superClassCheckStategy;
@@ -46,6 +47,9 @@ public abstract class SonarCustomCheckRule extends IssuableSubscriptionVisitor i
 		if (tree.is(Tree.Kind.METHOD)) {
 			annotationPresent = annotationCheckStrategy.checkAnnotation(tree, getAnnotationNames())
 					|| annotationPresent;
+			if (annotationPresent) {
+				propertyAnnotationPresent = annotationCheckStrategy.checkPropertyAnnotation(tree, getPropertyNames());
+			}
 			returnTypeAndAnnotatedWithBean = annotationCheckStrategy.checkReturnTypeAndAnnotatedWithBean(tree,
 					getReturnTypeNames()) || returnTypeAndAnnotatedWithBean;
 			checkReturnType = importCheckStrategy.checkReturnType(tree, getReturnTypeNames());
@@ -63,7 +67,7 @@ public abstract class SonarCustomCheckRule extends IssuableSubscriptionVisitor i
 	@Override
 	public void leaveFile(JavaFileScannerContext context) {
 		if (!annotationPresent && !returnTypeAndAnnotatedWithBean && !checkReturnandImportPresent
-				&& !checkSuperClassPresent) {
+				&& !checkSuperClassPresent && !propertyAnnotationPresent) {
 			reportIssue(context.getTree(), getClassName(context) + ": " + getMessage());
 		}
 		annotationPresent = false;
@@ -85,6 +89,8 @@ public abstract class SonarCustomCheckRule extends IssuableSubscriptionVisitor i
 	protected abstract List<String> getimportNames();
 
 	protected abstract List<String> getSuperClassNames();
+
+	protected abstract List<String> getPropertyNames();
 
 	protected abstract String getMessage();
 

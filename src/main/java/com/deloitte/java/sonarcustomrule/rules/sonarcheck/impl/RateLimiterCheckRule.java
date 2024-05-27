@@ -63,4 +63,9 @@ public class RateLimiterCheckRule extends SonarCustomCheckRule {
 	protected List<String> getSuperClassNames() {
 		return null;
 	}
+
+	@Override
+	protected List<String> getPropertyNames() {
+		return null;
+	}
 }

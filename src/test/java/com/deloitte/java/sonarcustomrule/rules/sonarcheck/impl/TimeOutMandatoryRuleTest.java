@@ -39,5 +39,15 @@ public class TimeOutMandatoryRuleTest {
 				.withCheck((JavaFileScanner) check).verifyNoIssues();
 
 	}
+	
+	@Test
+	void detectedHystrixProperty() {
+		TimeOutCheckRule check = new TimeOutCheckRule();
+
+		CheckVerifier.newVerifier()
+				.onFile("src/test/files/com/deloitte/java/testrule/timeout/HystricPropertyCheckFile.java")
+				.withCheck((JavaFileScanner) check).verifyNoIssues();
+
+	}
 
 }

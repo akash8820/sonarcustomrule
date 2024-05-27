@@ -29,6 +29,12 @@ public class TimeOutCheckRule extends SonarCustomCheckRule {
 	static {
 		SUPERCLASS_NAMES.add("HystrixCommand");
 	}
+	
+	private static final List<String> PROPERTY_NAMES = new ArrayList<>();
+
+	static {
+		PROPERTY_NAMES.add("execution.isolation.thread.timeoutInMilliseconds");
+	}
 
 	@Override
 	protected List<String> getAnnotationNames() {
@@ -53,6 +59,11 @@ public class TimeOutCheckRule extends SonarCustomCheckRule {
 	@Override
 	protected List<String> getSuperClassNames() {
 		return SUPERCLASS_NAMES;
+	}
+
+	@Override
+	protected List<String> getPropertyNames() {
+		return PROPERTY_NAMES;
 	}
 
 }
